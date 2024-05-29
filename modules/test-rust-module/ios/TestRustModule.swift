@@ -31,14 +31,5 @@ public class TestRustModule: Module {
         "value": value
       ])
     }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(TestRustModuleView.self) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { (view: TestRustModuleView, prop: String) in
-        print(prop)
-      }
-    }
   }
 }

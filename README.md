@@ -42,10 +42,6 @@ We are Using Expo Modules API for reducing the need for the library support of b
     - update native swift code to use Rust code (TODO: document this part step-by-step)
 
 - Compile Rust code for Android
-    - `cargo ndk --target aarch64-linux-android --platform 31 -- build --release`
-    - `cargo ndk --target armv7-linux-androideabi --platform 31 -- build --release`
-    - `cargo ndk --target i686-linux-android --platform 31 -- build --release`
-    - `cargo ndk --target x86_64-linux-android --platform 31 -- build --release`
     - `cargo install cargo-ndk`
     - `npm run cargo:android` (for more details check [cargo-android.ts](scripts/cargo-android.ts))
 
