@@ -4,6 +4,15 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
 class TestRustModule : Module() {
+  companion object {
+    // Load the native library
+    init {
+        System.loadLibrary("native_rust_lib")
+    }
+  }
+
+  external fun add(a: Int, b: Int): Int
+
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
   // See https://docs.expo.dev/modules/module-api for more details about available components.
@@ -24,6 +33,10 @@ class TestRustModule : Module() {
     // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
     Function("hello") {
       "Hello world! 👋"
+    }
+
+    Function("add") { a: Int, b: Int ->
+      add(a, b)
     }
 
     // Defines a JavaScript function that always returns a Promise and whose native code

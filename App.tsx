@@ -1,11 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { hello } from './modules/test-rust-module';
+import { hello, add } from './modules/test-rust-module';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Hello ReactNative Timon / {hello()}</Text>
+      <Text>ReactNative Timon {hello()}</Text>
+      <Text>Add 5 + 7 from Rust: {add(5, 7)}</Text>
       <StatusBar style="auto" />
     </View>
   );

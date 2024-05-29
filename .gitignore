@@ -16,6 +16,11 @@ web-build/
 *.key
 *.mobileprovision
 
+# Rust
+target
+build
+jniLibs
+
 # Metro
 .metro-health-check*
 
