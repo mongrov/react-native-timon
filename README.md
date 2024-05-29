@@ -20,11 +20,11 @@ We are Using Expo Modules API for reducing the need for the library support of b
 1. Clone this project && `cd react-native-timon`
 2. run `npm start`
 3. install the expo app from (AppStore | PlayStore), open it and Scan the QR. or you can insatall an android studio emulator and enter the `exp://<ip-add:port>` you see on the terminal
+4. run the app from emulator `npx expo run:[android | ios]`. (step 3 won't work with native modules on "Expo Go" except the ones the app ships with)
 
 - Create expo module (optional)
     - `npx create-expo-module my-rust-module --local`
     - `npx expo prebuild`
-    - `npx expo run:[android | ios]`
 
 - Create rust library (optional)
     - `cargo new --lib native_rust_lib`
