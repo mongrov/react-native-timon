@@ -16,6 +16,14 @@ export function add(num1: number, num2: number) {
   return TestRustModule.add(num1, num2)
 }
 
+export function logVersions(version: string, appVersion: string) {
+  return TestRustModule.logVersions(version, appVersion)
+}
+
+export function timonInit() {
+  return TestRustModule.timonInit()
+}
+
 export async function setValueAsync(value: string) {
   return await TestRustModule.setValueAsync(value);
 }

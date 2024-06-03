@@ -29,6 +29,8 @@ We are Using Expo Modules API for reducing the need for the library support of b
 - Create rust library (optional)
     - `cargo new --lib native_rust_lib`
     - `cd native_rust_lib`
+    - add `#[no_mangle]` and `pub extern "C"` directives to functions for IOS
+    - wrap the rust code with JNI
 
 - Install Rust Android & iOS targets
     - `rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android`
@@ -41,10 +43,12 @@ We are Using Expo Modules API for reducing the need for the library support of b
     - add `s.vendored_libraries = 'native_rust_lib.a'` to `modules/test-rust-module/ios/RustModule.podspec` file to include Rust code
     - update native swift code to use Rust code (TODO: document this part step-by-step)
 
-- Compile Rust code for Android
-    - `cargo install cargo-ndk`
-    - `npm run cargo:android` (for more details check [cargo-android.ts](scripts/cargo-android.ts))
-
+- Compile Rust code(timon) for Android
+    - copy the timon repository to the root directory, then run the following commands from there:
+    ```
+    cargo install cross --git https://github.com/cross-rs/cross
+    npm run cargo:android` # for more details check scripts/cargo-android.ts
+    ```
     - Update the java/kotlin RustModule to use Rust code
         - load library in `<RustModule>.kt`
         - add function type to `<RustModule>.kt`

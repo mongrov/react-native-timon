@@ -7,11 +7,20 @@ class TestRustModule : Module() {
   companion object {
     // Load the native library
     init {
-        System.loadLibrary("native_rust_lib")
+        try {
+            System.loadLibrary("native_rust_lib")
+            System.loadLibrary("cmd")
+      } catch (e: UnsatisfiedLinkError) {
+          e.printStackTrace()
+      }
     }
   }
 
   external fun add(a: Int, b: Int): Int
+
+  external fun logVersions(version: String, appVersion: String): Unit
+
+  external fun greptimeInit(): String
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -37,6 +46,14 @@ class TestRustModule : Module() {
 
     Function("add") { a: Int, b: Int ->
       add(a, b)
+    }
+
+    Function("logVersions") { version: String, appVersion: String ->
+      logVersions(version, appVersion)
+    }
+
+    Function("timonInit") {
+      greptimeInit()
     }
 
     // Defines a JavaScript function that always returns a Promise and whose native code
