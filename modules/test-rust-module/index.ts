@@ -5,27 +5,8 @@ import { NativeModulesProxy, EventEmitter, Subscription } from 'expo-modules-cor
 import TestRustModule from './src/TestRustModule';
 import { ChangeEventPayload } from './src/TestRustModule.types';
 
-// Get the native constant value.
-export const PI = TestRustModule.PI;
-
-export function hello(): string {
-  return TestRustModule.hello();
-}
-
-export function add(num1: number, num2: number) {
-  return TestRustModule.add(num1, num2)
-}
-
-export function logVersions(version: string, appVersion: string) {
-  return TestRustModule.logVersions(version, appVersion)
-}
-
-export function timonInit() {
-  return TestRustModule.timonInit()
-}
-
-export async function setValueAsync(value: string) {
-  return await TestRustModule.setValueAsync(value);
+export async function timonInit() {
+  return await TestRustModule.timonInit()
 }
 
 const emitter = new EventEmitter(TestRustModule ?? NativeModulesProxy.TestRustModule);

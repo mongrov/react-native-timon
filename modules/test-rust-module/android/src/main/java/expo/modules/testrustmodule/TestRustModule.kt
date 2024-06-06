@@ -5,10 +5,10 @@ import expo.modules.kotlin.modules.ModuleDefinition
 
 class TestRustModule : Module() {
   companion object {
-    // Load the native library
+    // Load the native libraries
     init {
         try {
-            System.loadLibrary("native_rust_lib")
+            // System.loadLibrary("native_rust_lib")
             System.loadLibrary("cmd")
       } catch (e: UnsatisfiedLinkError) {
           e.printStackTrace()
@@ -16,10 +16,7 @@ class TestRustModule : Module() {
     }
   }
 
-  external fun add(a: Int, b: Int): Int
-
-  external fun logVersions(version: String, appVersion: String): Unit
-
+  // external fun add(a: Int, b: Int): Int
   external fun greptimeInit(): String
 
   // Each module class must implement the definition function. The definition consists of components
@@ -31,6 +28,7 @@ class TestRustModule : Module() {
     // The module will be accessible from `requireNativeModule('TestRustModule')` in JavaScript.
     Name("TestRustModule")
 
+    /** ********************************** NativeModule Examples **********************************
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants(
       "PI" to Math.PI
@@ -48,14 +46,6 @@ class TestRustModule : Module() {
       add(a, b)
     }
 
-    Function("logVersions") { version: String, appVersion: String ->
-      logVersions(version, appVersion)
-    }
-
-    Function("timonInit") {
-      greptimeInit()
-    }
-
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
     AsyncFunction("setValueAsync") { value: String ->
@@ -63,6 +53,12 @@ class TestRustModule : Module() {
       sendEvent("onChange", mapOf(
         "value" to value
       ))
+    }
+    */
+
+    // ********************************** Rust NativeModules(Timon Storage) ********************************** //
+    AsyncFunction("timonInit") {
+      greptimeInit()
     }
   }
 }
