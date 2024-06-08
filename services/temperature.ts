@@ -28,3 +28,12 @@ export const fetchTemperature = async (limit: number = 60) => {
     console.error("Error Fetching TemperatureTable:", error);
   }
 }
+
+export const temperatureTableSize = async () => {
+  try {
+    const tempCount = await sql.from('temperature_table').count();
+    return tempCount;
+  } catch(error) {
+    console.error("Error Getting TemperatureTable Size:", error);
+  }
+}

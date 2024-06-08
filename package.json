@@ -9,7 +9,6 @@
     "web": "expo start --web",
     "cargo:android": "tsx scripts/cargo-android.ts"
   },
-  "type": "module",
   "dependencies": {
     "expo": "~51.0.8",
     "expo-status-bar": "~1.12.1",

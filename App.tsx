@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
 import { timonInit } from './modules/test-rust-module';
 import { useEffect, useState } from 'react';
-import { createTestTable, fetchTemperature } from './services';
+import { createTestTable, fetchTemperature, temperatureTableSize } from './services';
 
 const initializeTimon = async () => {
   try {
@@ -17,22 +17,27 @@ initializeTimon();
 
 export default function App() {
   const [temperatureList, setTemperatureList] = useState<any[]>([]);
+  const [fetchTemperatureListAgain, setFetchTemperatureListAgain] = useState(false);
+
+  const onRefreshTemperatureList = () => {
+    setFetchTemperatureListAgain(!fetchTemperatureListAgain);
+  }
 
   useEffect(() => {
     (async () => {
       await createTestTable();
+      console.log("Temperature Table Size:", await temperatureTableSize());
     })();
   }, []);
 
   useEffect(() => {
-    const fetchAndUpdateTemperature = async () => {
-      const response = await fetchTemperature(60);
-      setTemperatureList(response);
-    };
-    fetchAndUpdateTemperature();
-    const intervalId = setInterval(fetchAndUpdateTemperature, 1000 * 30);
-    return () => clearInterval(intervalId);
-  }, []);
+    console.log("Fetch Again:", fetchTemperatureListAgain);
+    (async () => {
+      const temperatureListResponse = await fetchTemperature(60);
+      console.log('temperatureListResponse:', temperatureListResponse);
+      setTemperatureList(temperatureListResponse);
+    })();
+  }, [fetchTemperatureListAgain]);
 
   const renderItem = ({ item }: any) => (
     <View style={styles.item}>
@@ -48,6 +53,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Button title='Refresh Temperature List' onPress={onRefreshTemperatureList} />
       <FlatList
         data={temperatureList}
         renderItem={renderItem}

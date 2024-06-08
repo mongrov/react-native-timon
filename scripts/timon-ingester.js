@@ -1,6 +1,5 @@
-import Greptime from 'greptime';
-import { v4 as uuidv4 } from 'uuid';
-
+const Greptime = require('greptime');
+const { v4: uuidv4 } = require('uuid');
 /**
  * To Set Up Port Forwarding for Android Emulator:
  *   - Forward TCP port 5000 to 4000:
@@ -14,7 +13,6 @@ import { v4 as uuidv4 } from 'uuid';
  *   2) Use PM2 to manage and monitor the script:
  *      pm2 start scripts/timon-ingester.js --name timon-ingester
  */
-
 
 let { sql } = Greptime({
   host: 'http://localhost:5000',
@@ -31,7 +29,7 @@ const insertTemp = async () => {
   const valuesToInsert = [Date.now(), uuidv4(), randomAssetId, randomTemp, randomHumidity];
   console.log('Values to insert:', valuesToInsert); // Debugging: Print values to insert
   await sql.insert('temperature_table', valuesToInsert);
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 10));
 };
 
 const main = async () => {
