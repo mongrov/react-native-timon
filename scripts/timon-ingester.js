@@ -19,17 +19,20 @@ let { sql } = Greptime({
   dbname: 'public',
   username: '',
   password: '',
-})
+});
 
-const insertTemp = async () => {
+const generateNRandomValues = (n = 1) => {
   const randomAssetId = `fridge${Math.floor(Math.random() * 4) + 1}`;
   const randomTemp = Math.floor(Math.random() * 40);
   const randomHumidity = Math.floor(randomTemp + (randomTemp / 5));
-  
-  const valuesToInsert = [Date.now(), uuidv4(), randomAssetId, randomTemp, randomHumidity];
-  console.log('Values to insert:', valuesToInsert); // Debugging: Print values to insert
+  return new Array(n).fill().map(() => ([Date.now(), uuidv4(), randomAssetId, randomTemp, randomHumidity]));
+};
+
+const insertTemp = async () => {  
+  const valuesToInsert = generateNRandomValues(10);
+  console.log(`insert ${valuesToInsert.length} values every 500ms:`); // Debugging: Print values to insert
   await sql.insert('temperature_table', valuesToInsert);
-  await new Promise((resolve) => setTimeout(resolve, 10));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 };
 
 const main = async () => {
