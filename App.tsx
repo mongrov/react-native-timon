@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
-import { timonInit } from './modules/test-rust-module';
+import { timonInit, readParquetFile } from './modules/test-rust-module';
 import { useEffect, useState } from 'react';
-import { createTestTable, fetchTemperature, temperatureTableSize } from './services';
+import { createTestTable, fetchTemperature } from './services';
 
 const initializeTimon = async () => {
   try {
@@ -26,7 +26,6 @@ export default function App() {
   useEffect(() => {
     (async () => {
       await createTestTable();
-      console.log("Temperature Table Size:", await temperatureTableSize());
     })();
   }, []);
 
@@ -34,7 +33,6 @@ export default function App() {
     console.log("Fetch Again:", fetchTemperatureListAgain);
     (async () => {
       const temperatureListResponse = await fetchTemperature(60);
-      console.log('temperatureListResponse:', temperatureListResponse);
       setTemperatureList(temperatureListResponse);
     })();
   }, [fetchTemperatureListAgain]);
@@ -50,6 +48,15 @@ export default function App() {
       </Text>
     </View>
   );
+
+  useEffect(() => {
+    try {
+      const output = readParquetFile("files/tmp/greptimedb/data/greptime/public/1024/1024_0000000000/0975d74b-46f4-47fa-a822-b1e6ea907c7f.parquet");
+      console.log('readParquetFile:', output);
+    } catch(error) {
+      console.error("Error Reading Parquet File:", error)
+    }
+  }, []);
 
   return (
     <View style={styles.container}>

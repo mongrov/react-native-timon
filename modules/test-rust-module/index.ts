@@ -9,6 +9,10 @@ export async function timonInit() {
   return await TestRustModule.timonInit()
 }
 
+export function readParquetFile(filePath: String) {
+  return TestRustModule.readParquetFile(filePath)
+}
+
 const emitter = new EventEmitter(TestRustModule ?? NativeModulesProxy.TestRustModule);
 
 export function addChangeListener(listener: (event: ChangeEventPayload) => void): Subscription {

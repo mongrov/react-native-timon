@@ -7,16 +7,16 @@ class TestRustModule : Module() {
   companion object {
     // Load the native libraries
     init {
-        try {
-            // System.loadLibrary("native_rust_lib")
-            System.loadLibrary("cmd")
+      try {
+        System.loadLibrary("native_rust_lib")
+        System.loadLibrary("cmd")
       } catch (e: UnsatisfiedLinkError) {
-          e.printStackTrace()
+        e.printStackTrace()
       }
     }
   }
 
-  // external fun add(a: Int, b: Int): Int
+  external fun readParquetFile(filePath: String): String
   external fun greptimeInit(): String
 
   // Each module class must implement the definition function. The definition consists of components
@@ -42,10 +42,6 @@ class TestRustModule : Module() {
       "Hello world! 👋"
     }
 
-    Function("add") { a: Int, b: Int ->
-      add(a, b)
-    }
-
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
     AsyncFunction("setValueAsync") { value: String ->
@@ -55,6 +51,10 @@ class TestRustModule : Module() {
       ))
     }
     */
+
+    Function("readParquetFile") { filePath: String ->
+      readParquetFile(filePath)
+    }
 
     // ********************************** Rust NativeModules(Timon Storage) ********************************** //
     AsyncFunction("timonInit") {
