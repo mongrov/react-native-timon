@@ -13,6 +13,10 @@ export function readParquetFile(filePath: String) {
   return TestRustModule.readParquetFile(filePath)
 }
 
+export function writeJsonToParquet(filePath: String, jsonData: String) {
+  return TestRustModule.writeJsonToParquet(filePath, jsonData)
+}
+
 const emitter = new EventEmitter(TestRustModule ?? NativeModulesProxy.TestRustModule);
 
 export function addChangeListener(listener: (event: ChangeEventPayload) => void): Subscription {

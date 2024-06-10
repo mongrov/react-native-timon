@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
-import { timonInit, readParquetFile } from './modules/test-rust-module';
+import { timonInit, readParquetFile, writeJsonToParquet } from './modules/test-rust-module';
 import { useEffect, useState } from 'react';
 import { createTestTable, fetchTemperature } from './services';
 
@@ -51,8 +51,18 @@ export default function App() {
 
   useEffect(() => {
     try {
-      const output = readParquetFile("files/tmp/greptimedb/data/greptime/public/1024/1024_0000000000/0975d74b-46f4-47fa-a822-b1e6ea907c7f.parquet");
-      console.log('readParquetFile:', output);
+      const baseDir = "/data/data/com.sodium.reactnativetimon/";
+
+      const jsonString = JSON.stringify([
+        { name: 'ahmed boutaraa', age: 27, gender: 'male' },
+        { name: 'eyal arasu(CEO)', age: 45, gender: 'male' },
+      ]);
+      const result = writeJsonToParquet(baseDir + "files/tmp/sodium/example.parquet", jsonString);
+      console.log("writeJsonToParquet::result:", result);
+
+      const rawOutput = readParquetFile(baseDir + "files/tmp/sodium/example.parquet");
+      const output = JSON.parse(rawOutput);
+      console.log("readParquetFile::output:", output);
     } catch(error) {
       console.error("Error Reading Parquet File:", error)
     }

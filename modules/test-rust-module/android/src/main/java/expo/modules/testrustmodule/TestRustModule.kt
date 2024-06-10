@@ -17,6 +17,7 @@ class TestRustModule : Module() {
   }
 
   external fun readParquetFile(filePath: String): String
+  external fun writeJsonToParquet(filePath: String, jsonData: String): String
   external fun greptimeInit(): String
 
   // Each module class must implement the definition function. The definition consists of components
@@ -54,6 +55,10 @@ class TestRustModule : Module() {
 
     Function("readParquetFile") { filePath: String ->
       readParquetFile(filePath)
+    }
+
+    Function("writeJsonToParquet") { filePath: String, jsonData: String ->
+      writeJsonToParquet(filePath, jsonData)
     }
 
     // ********************************** Rust NativeModules(Timon Storage) ********************************** //
