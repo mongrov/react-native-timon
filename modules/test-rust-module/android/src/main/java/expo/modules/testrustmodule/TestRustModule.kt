@@ -9,7 +9,7 @@ class TestRustModule : Module() {
     init {
       try {
         System.loadLibrary("native_rust_lib")
-        System.loadLibrary("cmd")
+        // System.loadLibrary("timon")
       } catch (e: UnsatisfiedLinkError) {
         e.printStackTrace()
       }
@@ -18,7 +18,8 @@ class TestRustModule : Module() {
 
   external fun readParquetFile(filePath: String): String
   external fun writeJsonToParquet(filePath: String, jsonData: String): String
-  external fun greptimeInit(): String
+  external fun greptimeInit(): Unit
+  external fun datafusionQuerier(filePath: String, tableName: String, sqlQuery: String): String
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -64,6 +65,10 @@ class TestRustModule : Module() {
     // ********************************** Rust NativeModules(Timon Storage) ********************************** //
     AsyncFunction("timonInit") {
       greptimeInit()
+    }
+
+    AsyncFunction("datafusionQuerier") { filePath: String, tableName: String, sqlQuery: String ->
+      datafusionQuerier(filePath, tableName, sqlQuery)
     }
   }
 }

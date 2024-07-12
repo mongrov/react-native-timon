@@ -17,7 +17,7 @@ import fs from "fs";
 import { spawnSync } from "child_process";
 
 const TARGET_TO_DESTINATION = {
-  "aarch64-linux-android": "arm64-v8a",
+  // "aarch64-linux-android": "arm64-v8a",
   "x86_64-linux-android": "x86_64",
   // "i686-linux-android": "x86",
   // "armv7-linux-androideabi": "armeabi-v7a",
@@ -26,7 +26,7 @@ const TARGET_TO_DESTINATION = {
 function build(target: string) {
   spawnSync(
     "cross",
-    ["build", "--target", target, "--release"],
+    ["build", "--target", target, "--release", "-j4"],
     {
       stdio: "inherit",
     }
@@ -36,7 +36,7 @@ function build(target: string) {
 function main() {
   console.log("Building rust library for android");
 
-  process.chdir("timon/src/cmd");
+  process.chdir("native_rust_lib");
 
   Object.keys(TARGET_TO_DESTINATION).forEach(build);
 
@@ -45,15 +45,14 @@ function main() {
   Object.entries(TARGET_TO_DESTINATION).forEach(([target, architecture]) => {
     const sourcePath = path.join( // Ensure the path matches the library location on your filesystem
       process.cwd(),
-      "../",
+      'native_rust_lib',
       "target",
       target,
       "release",
-      "libcmd.so"
+      "libnative_rust_lib.so"
     );
     const architecturePath = path.join( // Ensure the path matches the library location on your filesystem
       process.cwd(),
-      '../../',
       "modules",
       "test-rust-module",
       "android",
@@ -67,7 +66,7 @@ function main() {
     }
     fs.copyFileSync(
       sourcePath,
-      path.join(architecturePath, "libcmd.so")
+      path.join(architecturePath, "libnative_rust_lib.so")
     );
   });
 }

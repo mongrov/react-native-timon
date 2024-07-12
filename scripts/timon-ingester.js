@@ -1,5 +1,5 @@
 const Greptime = require('greptime');
-const { v4: uuidv4 } = require('uuid');
+const { uuid } = require('uuidv4');
 /**
  * To Set Up Port Forwarding for Android Emulator:
  *   - Forward TCP port 5000 to 4000:
@@ -25,7 +25,7 @@ const generateNRandomValues = (n = 1) => {
   const randomAssetId = `fridge${Math.floor(Math.random() * 4) + 1}`;
   const randomTemp = Math.floor(Math.random() * 40);
   const randomHumidity = Math.floor(randomTemp + (randomTemp / 5));
-  return new Array(n).fill().map(() => ([Date.now(), uuidv4(), randomAssetId, randomTemp, randomHumidity]));
+  return new Array(n).fill().map(() => ([Date.now(), uuid(), randomAssetId, randomTemp, randomHumidity]));
 };
 
 const insertTemp = async () => {  

@@ -15,7 +15,8 @@
     "greptime": "^0.3.3",
     "react": "18.2.0",
     "react-native": "0.74.1",
-    "uuid": "^9.0.1"
+    "react-native-uuid": "^2.0.2",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
