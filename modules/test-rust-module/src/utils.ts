@@ -17,12 +17,31 @@ export const extractTableName = (sqlQuery: string): string => {
   return '';
 };
 
+export const generateDatesList = (startDate: string, endDate: string) => {
+  const dateList = [];
+  let currentDate = new Date(startDate);
+  while (currentDate <= new Date(endDate)) {
+    dateList.push(new Date(currentDate).toISOString().split('T')[0]);
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  return dateList;
+}
+
 export const getFilePath = (tableName: string): string => {
   const BASE_PATH = "/data/data/com.sodium.reactnativetimon/files/tmp/timon/";
   const insertionDate = new Date().toISOString().split('T')[0];
   const filePath = BASE_PATH + `${tableName}_${insertionDate}.parquet`;
   return filePath;
-}
+};
+
+export const getFilesPath = (tableName: string, datesList: string[]): string[] => {
+  const BASE_PATH = "/data/data/com.sodium.reactnativetimon/files/tmp/timon/";
+  const filesPath = datesList.map((dateString) => {
+    const filePath = BASE_PATH + `${tableName}_${dateString}.parquet`;
+    return filePath
+  });
+  return filesPath;
+};
 
 export const parseJson = (jsonString: string) => {
   try {

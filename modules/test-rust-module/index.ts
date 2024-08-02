@@ -3,14 +3,15 @@ import { NativeModulesProxy, EventEmitter, Subscription } from 'expo-modules-cor
 // and on native platforms to TestRustModule.ts
 import TestRustModule from './src/TestRustModule';
 import { ChangeEventPayload } from './src/TestRustModule.types';
-import { extractTableName, getFilePath, parseJson } from './src/utils';
+import { extractTableName, getFilePath, getFilesPath, generateDatesList, parseJson } from './src/utils';
 
-export async function datafusionQuerier(sqlQuery: string) {
+export async function datafusionQuerier(sqlQuery: string, range?: { from: string, to: string }) {
   let errorString;
   try {
+    const filesPaths = range ? generateDatesList(range.from, range.to) : [new Date().toISOString().split('T')[0]];
     const tableName = extractTableName(sqlQuery);
-    const filePath = getFilePath(tableName);
-    const result = await TestRustModule.datafusionQuerier(filePath, tableName, sqlQuery);
+    const filesPathList = getFilesPath(tableName, filesPaths);
+    const result = await TestRustModule.datafusionQuerier(filesPathList, tableName, sqlQuery);
     return parseJson(result);
   } catch (error) {
     console.error("Error calling datafusionQuerier: ", error, errorString);

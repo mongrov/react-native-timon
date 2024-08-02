@@ -6,17 +6,24 @@ import uuid from 'react-native-uuid';
 
 export default function App() {
   const [temperatureList, setTemperatureList] = useState<any[]>([]);
+  const [onProcess, setOnProcess] = useState(false);
 
   const onRefreshTemperatureList = async () => {
+    setOnProcess(() => true);
 		const sqlQuery = `SELECT * FROM temperature ORDER BY timestamp DESC LIMIT 100`;
-		const temperatureData = await datafusionQuerier(sqlQuery);
+    const queryRange = { from: '2024-07-14', to: '2024-07-16' };
+		const temperatureData = await datafusionQuerier(sqlQuery, queryRange);
 		setTemperatureList(temperatureData);
+    setOnProcess(() => false);
   }
 
-	const insertRandomTempData = () => {
+	const insertRandomTempData = async () => {
+    setOnProcess(() => true);
+    await new Promise((res) => setTimeout(() => res(null), 500));
 		const randomNumber = () => Number(Math.random() * 80).toFixed(2);
-		const randomData = new Array(1).fill(0).map((_, index) => ({ id: uuid.v4(), timestamp: Date.now() + (index * 2), temperature: randomNumber(), humidity: randomNumber() }));
+		const randomData = new Array(10).fill(0).map((_, index) => ({ id: uuid.v4(), timestamp: Date.now() + (index * 2), temperature: randomNumber(), humidity: randomNumber() }));
 		writeJsonToParquet("temperature", randomData);
+    setOnProcess(() => false);
 	}
 
   const renderItem = ({ item }: any) => (
@@ -33,8 +40,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Button title='Refresh Temperature List' onPress={onRefreshTemperatureList} />
-      <Button title='Insert Random Temperature' color="red" onPress={insertRandomTempData} />
+      <Button title='Refresh Temperature List' onPress={onRefreshTemperatureList} disabled={onProcess} />
+      <Button title='Insert Random Temperature' color="red" onPress={insertRandomTempData} disabled={onProcess} />
 			<FlatList
         data={temperatureList}
         renderItem={renderItem}
