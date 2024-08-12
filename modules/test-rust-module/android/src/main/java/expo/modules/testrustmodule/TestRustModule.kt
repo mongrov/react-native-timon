@@ -19,7 +19,7 @@ class TestRustModule : Module() {
   external fun readParquetFile(filePath: String): String
   external fun writeJsonToParquet(filePath: String, jsonData: String): String
   external fun greptimeInit(): Unit
-  external fun datafusionQuerier(filePaths: Array<String>, tableName: String, sqlQuery: String): String
+  external fun datafusionQuerier(filePaths: Array<String>, tableName: String, sqlQuery: String, isJsonFormat: Boolean): String
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -67,8 +67,8 @@ class TestRustModule : Module() {
       greptimeInit()
     }
 
-    AsyncFunction("datafusionQuerier") { filePaths: Array<String>, tableName: String, sqlQuery: String ->
-      datafusionQuerier(filePaths, tableName, sqlQuery)
+    AsyncFunction("datafusionQuerier") { filePaths: Array<String>, tableName: String, sqlQuery: String, isJsonFormat: Boolean ->
+      datafusionQuerier(filePaths, tableName, sqlQuery, isJsonFormat)
     }
   }
 }

@@ -11,7 +11,7 @@ export async function datafusionQuerier(sqlQuery: string, range?: { from: string
     const filesPaths = range ? generateDatesList(range.from, range.to) : [new Date().toISOString().split('T')[0]];
     const tableName = extractTableName(sqlQuery);
     const filesPathList = getFilesPath(tableName, filesPaths);
-    const result = await TestRustModule.datafusionQuerier(filesPathList, tableName, sqlQuery);
+    const result = await TestRustModule.datafusionQuerier(filesPathList, tableName, sqlQuery, true);
     return parseJson(result);
   } catch (error) {
     console.error("Error calling datafusionQuerier: ", error, errorString);
