@@ -19,7 +19,7 @@ class TestRustModule : Module() {
   external fun readParquetFile(filePath: String): String
   external fun writeJsonToParquet(filePath: String, jsonData: String): String
   external fun greptimeInit(): Unit
-  external fun datafusionQuerier(filePaths: Array<String>, tableName: String, sqlQuery: String, isJsonFormat: Boolean): String
+  external fun datafusionQuerier(baseDir: String, dateRange: Map<String, String>, sqlQuery: String): String
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -67,8 +67,17 @@ class TestRustModule : Module() {
       greptimeInit()
     }
 
-    AsyncFunction("datafusionQuerier") { filePaths: Array<String>, tableName: String, sqlQuery: String, isJsonFormat: Boolean ->
-      datafusionQuerier(filePaths, tableName, sqlQuery, isJsonFormat)
+    AsyncFunction("datafusionQuerier") { baseDir: String, dateRange: Map<String, String>?, sqlQuery: String ->
+      // Ensure the dateRange contains valid "start" and "end" values
+      val rustDateRange: HashMap<String, String> = if (dateRange != null && dateRange["start"] != null && dateRange["end"] != null) {
+        HashMap(dateRange)
+      } else {
+        // Provide default date range if invalid or missing
+        hashMapOf("start" to "1970-01-01", "end" to "1970-01-02")
+      }
+      
+      // Call the Rust function with the validated or default date range
+      datafusionQuerier(baseDir, rustDateRange, sqlQuery)
     }
   }
 }

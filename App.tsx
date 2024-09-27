@@ -10,9 +10,9 @@ export default function App() {
 
   const onRefreshTemperatureList = async () => {
     setOnProcess(() => true);
+    const dateRange = { start: '2024-07-10', end: '2024-10-28' };
 		const sqlQuery = `SELECT * FROM temperature ORDER BY timestamp DESC LIMIT 100`;
-    const queryRange = { from: '2024-07-14', to: '2024-07-16' };
-		const temperatureData = await datafusionQuerier(sqlQuery, queryRange);
+		const temperatureData = await datafusionQuerier(dateRange, sqlQuery);
 		setTemperatureList(temperatureData);
     setOnProcess(() => false);
   }
@@ -21,7 +21,7 @@ export default function App() {
     setOnProcess(() => true);
     await new Promise((res) => setTimeout(() => res(null), 500));
 		const randomNumber = () => Number(Math.random() * 80).toFixed(2);
-		const randomData = new Array(10).fill(0).map((_, index) => ({ id: uuid.v4(), timestamp: Date.now() + (index * 2), temperature: randomNumber(), humidity: randomNumber() }));
+		const randomData = new Array(100).fill(0).map((_, index) => ({ id: uuid.v4(), timestamp: Date.now() + (index * 2), temperature: randomNumber(), humidity: randomNumber() }));
 		writeJsonToParquet("temperature", randomData);
     setOnProcess(() => false);
 	}
