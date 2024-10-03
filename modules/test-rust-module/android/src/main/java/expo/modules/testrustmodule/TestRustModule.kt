@@ -8,66 +8,66 @@ class TestRustModule : Module() {
     // Load the native libraries
     init {
       try {
-        System.loadLibrary("native_rust_lib")
-        // System.loadLibrary("timon")
+        System.loadLibrary("timon")
       } catch (e: UnsatisfiedLinkError) {
         e.printStackTrace()
       }
     }
   }
 
-  external fun readParquetFile(filePath: String): String
-  external fun writeJsonToParquet(filePath: String, jsonData: String): String
-  external fun greptimeInit(): Unit
-  external fun datafusionQuerier(baseDir: String, dateRange: Map<String, String>, sqlQuery: String): String
+  // ******************************** File Storage ********************************
+  external fun initTimon(storagePath: String): String
+  external fun createDatabase(dbName: String): String
+  external fun createTable(dbName: String, tableName: String): String
+  external fun listDatabases(): String
+  external fun listTables(dbName: String): String
+  external fun deleteDatabase(dbName: String): String
+  external fun deleteTable(dbName: String, tableName: String): String
+  external fun insert(dbName: String, tableName: String, jsonData: String): String
+  external fun query(dbName: String, dateRange: Map<String, String>, sqlQuery: String): String
 
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  // ******************************** S3 Compatible Storage ********************************
+  external fun initBucket(bucket_endpoint: String, bucket_name: String, access_key_id: String, secret_access_key: String): String
+  external fun queryBucket(dateRange: Map<String, String>, sqlQuery: String): String
+  external fun sinkMonthlyParquet(dbName: String, tableName: String): String
+
   override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('TestRustModule')` in JavaScript.
     Name("TestRustModule")
 
-    /** ********************************** NativeModule Examples **********************************
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants(
-      "PI" to Math.PI
-    )
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
+    // ******************************** File Storage ********************************
+    Function("initTimon") { storagePath: String ->
+      initTimon(storagePath)
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
-    }
-    */
-
-    Function("readParquetFile") { filePath: String ->
-      readParquetFile(filePath)
+    Function("createDatabase") { dbName: String ->
+      createDatabase(dbName)
     }
 
-    Function("writeJsonToParquet") { filePath: String, jsonData: String ->
-      writeJsonToParquet(filePath, jsonData)
+    Function("createTable") { dbName: String, tableName: String ->
+      createTable(dbName, tableName)
     }
 
-    // ********************************** Rust NativeModules(Timon Storage) ********************************** //
-    AsyncFunction("timonInit") {
-      greptimeInit()
+    Function("listDatabases") {
+      listDatabases()
     }
 
-    AsyncFunction("datafusionQuerier") { baseDir: String, dateRange: Map<String, String>?, sqlQuery: String ->
+    Function("listTables") { dbName: String ->
+      listTables(dbName)
+    }
+
+    Function("deleteDatabase") { dbName: String ->
+      deleteDatabase(dbName)
+    }
+
+    Function("deleteTable") { dbName: String, tableName: String ->
+      deleteTable(dbName, tableName)
+    }
+
+    Function("insert") { dbName: String, tableName: String, jsonData: String ->
+      insert(dbName, tableName, jsonData)
+    }
+
+    AsyncFunction("query") { dbName: String, dateRange: Map<String, String>?, sqlQuery: String ->
       // Ensure the dateRange contains valid "start" and "end" values
       val rustDateRange: HashMap<String, String> = if (dateRange != null && dateRange["start"] != null && dateRange["end"] != null) {
         HashMap(dateRange)
@@ -75,9 +75,27 @@ class TestRustModule : Module() {
         // Provide default date range if invalid or missing
         hashMapOf("start" to "1970-01-01", "end" to "1970-01-02")
       }
-      
-      // Call the Rust function with the validated or default date range
-      datafusionQuerier(baseDir, rustDateRange, sqlQuery)
+      query(dbName, rustDateRange, sqlQuery)
+    }
+
+    // ******************************** S3 Compatible Storage ********************************
+    Function("initBucket") { bucket_endpoint: String, bucket_name: String, access_key_id: String, secret_access_key: String ->
+      initBucket(bucket_endpoint, bucket_name, access_key_id, secret_access_key)
+    }
+
+    AsyncFunction("queryBucket") { dateRange: Map<String, String>?, sqlQuery: String ->
+      // Ensure the dateRange contains valid "start" and "end" values
+      val rustDateRange: HashMap<String, String> = if (dateRange != null && dateRange["start"] != null && dateRange["end"] != null) {
+        HashMap(dateRange)
+      } else {
+        // Provide default date range if invalid or missing
+        hashMapOf("start" to "1970-01-01", "end" to "1970-01-02")
+      }
+      queryBucket(rustDateRange, sqlQuery)
+    }
+
+    AsyncFunction("sinkMonthlyParquet") { dbName: String, tableName: String ->
+      sinkMonthlyParquet(dbName, tableName)
     }
   }
 }

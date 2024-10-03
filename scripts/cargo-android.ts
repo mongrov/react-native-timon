@@ -16,14 +16,20 @@ import path from "path";
 import fs from "fs";
 import { spawnSync } from "child_process";
 
-const TARGET_TO_DESTINATION = {
-  // "aarch64-linux-android": "arm64-v8a",
+const ANDROID_TARGET_TO_DESTINATION = {
+  "aarch64-linux-android": "arm64-v8a",
   "x86_64-linux-android": "x86_64",
-  // "i686-linux-android": "x86",
-  // "armv7-linux-androideabi": "armeabi-v7a",
-} as const;
+  "i686-linux-android": "x86",
+  "armv7-linux-androideabi": "armeabi-v7a",
+}
 
-function build(target: string) {
+const IOS_TARGET_TO_DESTINATION = {
+  "aarch64-apple-ios": "ios",
+  "aarch64-apple-ios-sim": "ios-sim",
+}
+
+const build_android = (target: string) => {
+  console.info("Building rust library for android target: ", target);
   spawnSync(
     "cross",
     ["build", "--target", target, "--release", "-j4"],
@@ -33,23 +39,32 @@ function build(target: string) {
   );
 }
 
-function main() {
-  console.log("Building rust library for android");
+const build_ios = (target: string) => {
+  console.info("Building rust library for ios target: ", target);
+  spawnSync(
+    "cross",
+    ["build", "--target", target, "--release", "-j4"],
+    {
+      stdio: "inherit",
+    }
+  );
+}
 
+const main = () => {
   process.chdir("native_rust_lib");
-
-  Object.keys(TARGET_TO_DESTINATION).forEach(build);
-
+  Object.keys(ANDROID_TARGET_TO_DESTINATION).forEach(build_android);
+  // Object.keys(IOS_TARGET_TO_DESTINATION).forEach(build_ios);
   process.chdir("..");
 
-  Object.entries(TARGET_TO_DESTINATION).forEach(([target, architecture]) => {
+  Object.entries(ANDROID_TARGET_TO_DESTINATION).forEach(([target, architecture]) => {
+    console.info('Moving rust library for android target: ', target);
     const sourcePath = path.join( // Ensure the path matches the library location on your filesystem
       process.cwd(),
       'native_rust_lib',
       "target",
       target,
       "release",
-      "libnative_rust_lib.so"
+      "libtimon.so"
     );
     const architecturePath = path.join( // Ensure the path matches the library location on your filesystem
       process.cwd(),
@@ -66,7 +81,7 @@ function main() {
     }
     fs.copyFileSync(
       sourcePath,
-      path.join(architecturePath, "libnative_rust_lib.so")
+      path.join(architecturePath, "libtimon.so")
     );
   });
 }
